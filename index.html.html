@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela de Empréstimo Cyberpunk</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&family=Exo+2:wght@400;600&display=swap');
+
+        body {
+            background: linear-gradient(135deg, #1a1a40 0%, #2b0a4d 100%);
+            color: #e6e6e6;
+            font-family: 'Exo 2', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: auto;
+        }
+
+        .container {
+            background: rgba(20, 20, 50, 0.85);
+            border: 2px solid #00F0FF;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 15px #00F0FF, 0 0 30px #FF00E6;
+            backdrop-filter: blur(8px);
+            width: 90%;
+            max-width: 800px;
+            margin: 20px;
+        }
+
+        .header-image {
+            width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #00F0FF;
+            text-shadow: 0 0 8px #00F0FF;
+            margin-bottom: 20px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #00F0FF;
+            text-shadow: 0 0 4px #00F0FF;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #FF00E6;
+            border-radius: 5px;
+            color: #e6e6e6;
+            font-family: 'Exo 2', sans-serif;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #00F0FF;
+            box-shadow: 0 0 8px #00F0FF;
+            outline: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.6);
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #FF00E6;
+        }
+
+        th {
+            background: linear-gradient(45deg, #FF00E6, #00F0FF);
+            color: #1a1a40;
+            text-transform: uppercase;
+            text-shadow: 0 0 4px #1a1a40;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+        }
+
+        td {
+            color: #e6e6e6;
+            text-shadow: 0 0 4px #FF00E6;
+        }
+
+        tr:nth-child(even) {
+            background: rgba(40, 40, 80, 0.3);
+        }
+
+        tr:hover {
+            background: rgba(255, 0, 230, 0.15);
+            box-shadow: 0 0 8px #FF00E6 inset;
+        }
+
+        /* Estilo para destacar a linha do 7,8% */
+        tr.row-78 {
+            font-weight: bold;
+            color: #00F0FF;
+        }
+
+        /* Estilo para destacar as linhas 8,8% a 10,3% */
+        tr.row-88-to-103 {
+            background: rgba(80, 0, 80, 0.35);
+        }
+
+        /* Estilo para categorias de linhas */
+        tr.category-1 {
+            background: rgba(0, 255, 0, 0.05);
+        }
+
+        tr.category-2 {
+            background: rgba(255, 255, 0, 0.05);
+        }
+
+        tr.category-3 {
+            background: rgba(0, 255, 255, 0.05);
+        }
+
+        tr.category-4 {
+            background: rgba(255, 0, 0, 0.05);
+        }
+
+        tr.category-5 {
+            background: rgba(128, 128, 128, 0.05);
+        }
+
+        /* Estilo para linhas selecionadas */
+        tr.selected-row {
+            background: linear-gradient(45deg, #FF00E6, #00F0FF);
+            color: #1a1a40;
+            text-shadow: 0 0 4px #1a1a40;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+            }
+
+            th, td {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
+
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Cabeçalho com a imagem -->
+        <img src="https://uploaddeimagens.com.br/images/004/896/985/full/img.jpg?1746713575" alt="Banner Jorginho Cred" class="header-image">
+
+        <!-- Título da tabela -->
+        <h2>Tabela de Taxas</h2>
+
+        <label for="valorInicial">Valor Inicial:</label>
+        <input type="number" id="valorInicial" min="0" step="0.01" aria-label="Valor inicial do empréstimo" oninput="calcularValores()">
+
+        <label for="parcelas">Parcelas:</label>
+        <input type="number" id="parcelas" min="1" max="21" aria-label="Número de parcelas" oninput="calcularValores()">
+
+        <label for="bandeira">Bandeira:</label>
+        <select id="bandeira" aria-label="Bandeira do cartão" onchange="calcularValores()">
+            <option value="banese">Banese</option>
+            <option value="outros">Outros</option>
+        </select>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Parcelas</th>
+                    <th>Juros</th>
+                    <th>Valor a Receber</th>
+                    <th>Valor a Cobrar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="row-78 category-1">
+                    <td>1x</td>
+                    <td id="juros1">-</td>
+                    <td id="valorDesc1">-</td>
+                    <td id="valorFechado1">-</td>
+                </tr>
+                <tr class="row-88-to-103 category-2">
+                    <td>2x</td>
+                    <td id="juros2">-</td>
+                    <td id="valorDesc2">-</td>
+                    <td id="valorFechado2">-</td>
+                </tr>
+                <tr class="row-88-to-103 category-2">
+                    <td>3x</td>
+                    <td id="juros3">-</td>
+                    <td id="valorDesc3">-</td>
+                    <td id="valorFechado3">-</td>
+                </tr>
+                <tr class="row-88-to-103 category-2">
+                    <td>4x</td>
+                    <td id="juros4">-</td>
+                    <td id="valorDesc4">-</td>
+                    <td id="valorFechado4">-</td>
+                </tr>
+                <tr class="category-3">
+                    <td>5x</td>
+                    <td id="juros5">-</td>
+                    <td id="valorDesc5">-</td>
+                    <td id="valorFechado5">-</td>
+                </tr>
+                <tr class="category-3">
+                    <td>6x</td>
+                    <td id="juros6">-</td>
+                    <td id="valorDesc6">-</td>
+                    <td id="valorFechado6">-</td>
+                </tr>
+                <tr class="category-3">
+                    <td>7x</td>
+                    <td id="juros7">-</td>
+                    <td id="valorDesc7">-</td>
+                    <td id="valorFechado7">-</td>
+                </tr>
+                <tr class="category-3">
+                    <td>8x</td>
+                    <td id="juros8">-</td>
+                    <td id="valorDesc8">-</td>
+                    <td id="valorFechado8">-</td>
+                </tr>
+                <tr class="category-4">
+                    <td>9x</td>
+                    <td id="juros9">-</td>
+                    <td id="valorDesc9">-</td>
+                    <td id="valorFechado9">-</td>
+                </tr>
+                <tr class="category-4">
+                    <td>10x</td>
+                    <td id="juros10">-</td>
+                    <td id="valorDesc10">-</td>
+                    <td id="valorFechado10">-</td>
+                </tr>
+                <tr class="category-4">
+                    <td>11x</td>
+                    <td id="juros11">-</td>
+                    <td id="valorDesc11">-</td>
+                    <td id="valorFechado11">-</td>
+                </tr>
+                <tr class="category-5">
+                    <td>12x</td>
+                    <td id="juros12">-</td>
+                    <td id="valorDesc12">-</td>
+                    <td id="valorFechado12">-</td>
+                </tr>
+                <tr class="category-5">
+                    <td>13x</td>
+                    <td id="juros13">-</td>
+                    <td id="valorDesc13">-</td>
+                    <td id="valorFechado13">-</td>
+                </tr>
+                <tr class="category-5">
+                    <td>14x</td>
+                    <td id="juros14">-</td>
+                    <td id="valorDesc14">-</td>
+                    <td id="valorFechado14">-</td>
+                </tr>
+                <tr class="category-5">
+                    <td>15x</td>
+                    <td id="juros15">-</td>
+                    <td id="valorDesc15">-</td>
+                    <td id="valorFechado15">-</td>
+                </tr>
+                <tr class="category-5">
+                    <td>16x</td>
+                    <td id="juros16">-</td>
+                    <td id="valorDesc16">-</td>
+                    <td id="valorFechado16">-</td>
+                </tr>
+                <tr class="category-5">
+                    <td>17x</td>
+                    <td id="juros17">-</td>
+                    <td id="valorDesc17">-</td>
+                    <td id="valorFechado17">-</td>
+                </tr>
+                <tr class="category-5">
+                    <td>18x</td>
+                    <td id="juros18">-</td>
+                    <td id="valorDesc18">-</td>
+                    <td id="valorFechado18">-</td>
+                </tr>
+                <tr class="category-5">
+                    <td>19x</td>
+                    <td id="juros19">-</td>
+                    <td id="valorDesc19">-</td>
+                    <td id="valorFechado19">-</td>
+                </tr>
+                <tr class="category-5">
+                    <td>20x</td>
+                    <td id="juros20">-</td>
+                    <td id="valorDesc20">-</td>
+                    <td id="valorFechado20">-</td>
+                </tr>
+                <tr class="category-5">
+                    <td>21x</td>
+                    <td id="juros21">-</td>
+                    <td id="valorDesc21">-</td>
+                    <td id="valorFechado21">-</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function calcularValores() {
+            // Obtém valores dos inputs
+            const valorInicial = parseFloat(document.getElementById("valorInicial").value) || 0;
+            const parcelas = parseInt(document.getElementById("parcelas").value) || 0;
+            const bandeira = document.getElementById("bandeira").value;
+
+            // Validação
+            if (valorInicial <= 0 || parcelas < 1 || parcelas > 21) {
+                for (let i = 1; i <= 21; i++) {
+                    document.getElementById("juros" + i).textContent = "-";
+                    document.getElementById("valorDesc" + i).textContent = "-";
+                    document.getElementById("valorFechado" + i).textContent = "-";
+                    document.querySelectorAll("tbody tr")[i - 1].classList.remove("selected-row");
+                }
+                return;
+            }
+
+            // Calcula valores para cada linha
+            for (let i = 1; i <= 21; i++) {
+                const juros = obterTaxaJuros(i);
+                const valorFechado = calcularValorFechado(valorInicial, juros);
+                const valorDesc = calcularValorDesc(valorInicial, juros);
+
+                // Atualiza tabela
+                document.getElementById("juros" + i).textContent = (juros * 100).toFixed(2) + "%";
+                document.getElementById("valorDesc" + i).textContent = valorDesc.toFixed(2);
+                document.getElementById("valorFechado" + i).textContent = valorFechado.toFixed(2);
+
+                // Destaca linha selecionada
+                const row = document.querySelectorAll("tbody tr")[i - 1];
+                if (i === parcelas) {
+                    row.classList.add("selected-row");
+                } else {
+                    row.classList.remove("selected-row");
+                }
+            }
+        }
+
+        function obterTaxaJuros(parcela) {
+            const taxas = {
+                1: 0.078,
+                2: 0.088,
+                3: 0.098,
+                4: 0.103,
+                5: 0.108,
+                6: 0.111,
+                7: 0.122,
+                8: 0.125,
+                9: 0.135,
+                10: 0.1245,
+                11: 0.1350,
+                12: 0.142,
+                13: 0.168,
+                14: 0.178,
+                15: 0.182,
+                16: 0.188,
+                17: 0.198,
+                18: 0.202,
+                19: 0.218,
+                20: 0.223,
+                21: 0.2345
+            };
+            return taxas[parcela] || 0.2345; // Usa a taxa de 21x como padrão se ultrapassar
+        }
+
+        function calcularValorFechado(valor, juros) {
+            return valor / (1 - juros);
+        }
+
+        function calcularValorDesc(valor, juros) {
+            return valor * (1 - juros);
+        }
+
+        // Inicializa tabela com valores padrão
+        calcularValores();
+    </script>
+</body>
+</html>
